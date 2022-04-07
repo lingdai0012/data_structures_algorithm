@@ -27,6 +27,8 @@ api-specification/documentation-root/internal_api.yml
 node_modules/
 yarn-error.log
 
+.DS_Store
+
 
 ### Helm charts
 *.bak
