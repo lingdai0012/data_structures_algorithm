@@ -1,0 +1,44 @@
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+#!**/src/main/**/build/ #Delete in or after June 2021 if not needed
+#!**/src/test/**/build/ #Delete in or after June 2021 if not needed
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+#!**/src/main/**/out/ #Delete in or after June 2021 if not needed
+#!**/src/test/**/out/ #Delete in or after June 2021 if not needed
+
+### Python ###
+*.egg-info/
+venv*/
+**/__pycache__/
+dist/
+
+# API-specification output
+api-specification/documentation-root/api.yml
+api-specification/documentation-root/internal_api.yml
+
+### Nodejs, Javascript ###
+node_modules/
+yarn-error.log
+
+
+### Helm charts
+*.bak
+
+### run-local
+run-local/local
+run-local/umbrella_helm_chart
+
+# collection of future temporary stuff
+tmp/
+
+#ignore the dolt file
+.dolt
+.sqlhistory
+dolt/
