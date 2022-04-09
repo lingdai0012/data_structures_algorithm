@@ -12,15 +12,11 @@ def lcs2(a, b):
     for ii in range(1, a_len + 1):
         for jj in range(1, b_len + 1):
             if a[ii - 1] == b[jj - 1]:
-                number_commom_sequences[ii, jj] = min(
-                    max(
-                        number_commom_sequences[ii - 1, jj] + 1,
-                        number_commom_sequences[ii, jj - 1] + 1,
-                        number_commom_sequences[ii - 1, jj - 1],
-                    ),
-                    min(ii, jj),
+                number_commom_sequences[ii, jj] = max(
+                    number_commom_sequences[ii - 1, jj] + 1,
+                    number_commom_sequences[ii, jj - 1] + 1,
+                    number_commom_sequences[ii - 1, jj - 1] + 1,
                 )
-
             else:
                 number_commom_sequences[ii, jj] = max(
                     number_commom_sequences[ii - 1, jj],
