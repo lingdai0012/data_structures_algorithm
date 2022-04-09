@@ -16,8 +16,8 @@ def lcs2(a, b):
                 number_commom_sequences[ii, jj]= max(number_commom_sequences[ii-1, jj], number_commom_sequences[ii, jj-1])
     return number_commom_sequences[a_len, b_len]
 if __name__ == '__main__':
-    #input = sys.stdin.read()
-    data = list(map(int, input().split()))
+    input = sys.stdin.read()
+    data = list(map(int, input.split()))
 
     n = data[0]
     data = data[1:]
