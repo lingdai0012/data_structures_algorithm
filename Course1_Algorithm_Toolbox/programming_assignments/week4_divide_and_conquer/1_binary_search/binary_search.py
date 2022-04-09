@@ -1,19 +1,19 @@
 def binary_search(keys, query):
     low = 0
-    high = len(keys)-1
-    mid=0
+    high = len(keys) - 1
+    mid = 0
     while low <= high:
-        mid = (high + low)//2
+        mid = (high + low) // 2
         if keys[mid] == query:
             return mid
         elif keys[mid] > query:
-            high = mid - 1 
+            high = mid - 1
         else:
             low = mid + 1
     return -1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     num_keys = int(input())
     input_keys = list(map(int, input().split()))
     assert len(input_keys) == num_keys
@@ -23,4 +23,4 @@ if __name__ == '__main__':
     assert len(input_queries) == num_queries
 
     for q in input_queries:
-        print(binary_search(input_keys, q), end=' ')
+        print(binary_search(input_keys, q), end=" ")

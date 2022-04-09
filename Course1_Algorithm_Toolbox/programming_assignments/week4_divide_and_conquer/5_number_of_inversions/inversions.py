@@ -11,7 +11,8 @@ def get_number_of_inversions(a, b, left, right):
     number_of_inversions += merge(a, b, left, right, ave)
     return number_of_inversions
 
-def merge(a, b, left ,right, ave):
+
+def merge(a, b, left, right, ave):
     number_of_inversions = 0
     left_list = a[left:ave].copy()
     right_list = a[ave:right].copy()
@@ -36,13 +37,11 @@ def merge(a, b, left ,right, ave):
     while j < len(right_list):
         a[k] = right_list[j]
         k += 1
-        j += 1    
+        j += 1
     return number_of_inversions
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     input = sys.stdin.read()
     n, *a = list(map(int, input.split()))
     b = n * [0]

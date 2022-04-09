@@ -1,6 +1,7 @@
 # Uses python3
 import sys
 
+
 def gcd_naive(a, b):
     current_gcd = 1
     for d in range(2, min(a, b) + 1):
@@ -14,9 +15,8 @@ def gcd_naive(a, b):
 def gcd_efficient(a, b):
     if b == 0:
         return a
-    remainder = a%b
+    remainder = a % b
     return gcd_efficient(b, remainder)
-
 
 
 if __name__ == "__main__":
