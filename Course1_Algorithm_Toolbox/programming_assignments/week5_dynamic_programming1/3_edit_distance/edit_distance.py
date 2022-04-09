@@ -17,4 +17,4 @@ def edit_distance(s, t):
     return distances[s_len, t_len]
 
 if __name__ == "__main__":
-    print(edit_distance(input, input)
+    print(edit_distance(input(), input()))
