@@ -62,6 +62,4 @@ def partition3(A: list) -> bool:
 if __name__ == "__main__":
     input = sys.stdin.read()
     n, *A = list(map(int, input.split()))
-    start = time.time()
     print(partition3(A))
-    print(f"{time.time()-start}")

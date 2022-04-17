@@ -39,19 +39,4 @@ def get_maximum_value(dataset):
 
 
 if __name__ == "__main__":
-    import random
-    import time
-
-    operations = 28
-    symbols = random.choices(["+", "-", "*"], k=operations)
-    numbers = random.choices(list(range(10)), k=operations + 1)
-    numbers = [str(num) for num in numbers]
-    data = "".join(
-        [
-            numbers[ii // 2] if ii % 2 == 0 else symbols[(ii - 1) // 2]
-            for ii in range(2 * operations + 1)
-        ]
-    )
-    start = time.time()
-    print(get_maximum_value(data))
-    print(time.time() - start)
+    print(get_maximum_value(input()))
