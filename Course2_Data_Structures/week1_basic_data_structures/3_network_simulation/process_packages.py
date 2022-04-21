@@ -1,6 +1,7 @@
 # python3
 
 from collections import namedtuple
+import sys
 
 Request = namedtuple("Request", ["arrived_at", "time_to_process"])
 Response = namedtuple("Response", ["was_dropped", "started_at"])
@@ -13,7 +14,32 @@ class Buffer:
 
     def process(self, request):
         # write your code here
-        return Response(False, -1)
+        if len(self.finish_time) == 0:
+            self.finish_time.append(request.arrived_at + request.time_to_process)
+            return Response(False, request.arrived_at)
+        elif len(self.finish_time) < self.size:
+            start_time_current_request = (
+                self.finish_time[-1]
+                if self.finish_time[-1] > request.arrived_at
+                else request.arrived_at
+            )
+            self.finish_time.append(
+                start_time_current_request + request.time_to_process
+            )
+            return Response(False, start_time_current_request)
+        else:
+            if self.finish_time[0] > request.arrived_at:
+                return Response(True, -1)
+            else:
+                start_time_current_request = (
+                    self.finish_time[-1]
+                    if self.finish_time[-1] > request.arrived_at
+                    else request.arrived_at
+                )
+                self.finish_time = self.finish_time[1:] + [
+                    start_time_current_request + request.time_to_process
+                ]
+                return Response(False, start_time_current_request)
 
 
 def process_requests(requests, buffer):
