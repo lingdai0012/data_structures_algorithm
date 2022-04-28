@@ -1,4 +1,5 @@
 # python3
+import math
 
 
 def build_heap(data):
@@ -13,12 +14,26 @@ def build_heap(data):
     #
     # TODO: replace by a more efficient implementation
     swaps = []
-    for i in range(len(data)):
-        for j in range(i + 1, len(data)):
-            if data[i] > data[j]:
-                swaps.append((i, j))
-                data[i], data[j] = data[j], data[i]
+    # for i in range(len(data)):
+    #     for j in range(i + 1, len(data)):
+    #         if data[i] > data[j]:
+    #             swaps.append((i, j))
+    #             data[i], data[j] = data[j], data[i]
+    for ii in range(len(data) - 1, -1, -1):
+        sift_up(ii, data, swaps)
     return swaps
+
+
+def sift_up(ii, data, swaps):
+    if ii == 0:
+        return
+    parent = (ii - 1) // 2
+    if data[parent] > data[ii]:
+        data[parent], data[ii] = data[ii], data[parent]
+        swaps.append((parent, ii))
+        sift_up(parent, data, swaps)
+    else:
+        return
 
 
 def main():
@@ -27,7 +42,6 @@ def main():
     assert len(data) == n
 
     swaps = build_heap(data)
-
     print(len(swaps))
     for i, j in swaps:
         print(i, j)
