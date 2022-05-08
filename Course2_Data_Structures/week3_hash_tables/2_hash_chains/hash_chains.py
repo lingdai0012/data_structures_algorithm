@@ -47,7 +47,8 @@ class QueryProcessor:
                 self.write_search_result(query.s in self.elems[hash_num])
             elif query.type == "add":
                 if query.s not in self.elems[hash_num]:
-                    self.elems[hash_num].insert(0, query.s)
+                    self.elems[hash_num] = [query.s] + self.elems[hash_num]
+                print(self.elems)
             else:
                 if query.s in self.elems[hash_num]:
                     self.elems[hash_num].remove(query.s)
