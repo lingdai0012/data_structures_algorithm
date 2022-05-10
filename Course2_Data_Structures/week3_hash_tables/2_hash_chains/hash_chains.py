@@ -48,7 +48,6 @@ class QueryProcessor:
             elif query.type == "add":
                 if query.s not in self.elems[hash_num]:
                     self.elems[hash_num] = [query.s] + self.elems[hash_num]
-                print(self.elems)
             else:
                 if query.s in self.elems[hash_num]:
                     self.elems[hash_num].remove(query.s)
