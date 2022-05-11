@@ -36,5 +36,4 @@ if __name__ == "__main__":
     for (a, b) in edges:
         adj[a - 1].append(b - 1)
         adj[b - 1].append(a - 1)
-    print(adj)
     print(number_of_components(adj))
