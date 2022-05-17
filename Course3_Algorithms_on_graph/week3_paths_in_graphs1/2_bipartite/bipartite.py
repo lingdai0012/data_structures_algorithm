@@ -6,24 +6,27 @@ import queue
 
 def bipartite(adj):
     # write your code here
-    used = [0 for _ in range(len(adj))]
     colors = [None for _ in range(len(adj))]
     q = queue.Queue()
-    q.put(0)
-    colors[0] = 0
-    return bfs(adj, q, used, colors)
+    for ii in range(len(adj)):
+        if colors[ii] is None:
+            q.put(ii)
+            colors[ii] = 0
+            is_bipartite = bfs(adj, q, colors)
+            if is_bipartite == 0:
+                return 0
+    return 1
 
 
-def bfs(adj, q, used, colors):
+def bfs(adj, q, colors):
     while not q.empty():
         first = q.get()
         for ii in adj[first]:
-            if used[ii] == 0:
+            if colors[ii] is None:
                 colors[ii] = 1 - colors[first]
-                used[ii] = 1
                 q.put(ii)
             else:
-                if colors[ii] != 1 - colors[first]:
+                if colors[ii] == colors[first]:
                     return 0
     return 1
 
