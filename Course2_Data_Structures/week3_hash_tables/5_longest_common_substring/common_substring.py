@@ -6,130 +6,99 @@ from collections import namedtuple
 Answer = namedtuple("answer_type", "i j len")
 
 
-def get_hash_sum(string, x, m):
-    n = len(string)
-    h = [0]
-    for i in range(1, n + 1):
-        val = (x * h[i - 1] % m + ord(string[i - 1]) % m) % m
-        h.append(val)
-    return h
+class hash:
+    def __init__(self, s, x, m):
+        self.x = x
+        self.m = m
+        self.s = s
+        self.hash_table = self.get_hash_sum()
+
+    def get_hash_sum(self):
+        n = len(self.s)
+        h = [0]
+        for ii in range(1, n + 1):
+            val = (self.x * h[ii - 1] % self.m + ord(self.s[ii - 1]) % self.m) % self.m
+            h.append(val)
+        return h
+
+    def get_hash(self, start, length):
+        return (
+            self.hash_table[start + length] % self.m
+            - (pow(self.x, length, self.m) * self.hash_table[start] % self.m) % self.m
+        )
+
+    def get_hash_fixed_length(self, length):
+        return [
+            self.get_hash(ii, length) % self.m for ii in range(len(self.s) + 1 - length)
+        ]
 
 
-def get_hash(hash_table, start, length, x, m):
-    return (
-        hash_table[start + length] % m - (pow(x, length, m) * hash_table[start] % m) % m
-    )
+def check(hash_s1, hash_t1, hash_s2, hash_t2, start_l, end_l):
+    l = (start_l + end_l) // 2
+    hash_s1_l = hash_s1.get_hash_fixed_length(l)
+    hash_s2_l = hash_s2.get_hash_fixed_length(l)
+    hash_t1_l = hash_t1.get_hash_fixed_length(l)
+    hash_t2_l = hash_t2.get_hash_fixed_length(l)
 
-
-def get_hash_k(hash_table, string, length, x, m):
-    return [
-        get_hash(hash_table, ii, length, x, m) for ii in range(len(string) + 1 - length)
-    ]
+    possbile_max = Answer(0, 0, 0)
+    for ii in range(len(hash_s1_l)):
+        for jj in range(len(hash_t1_l)):
+            if (hash_s1_l[ii] == hash_t1_l[jj]) and (hash_s2_l[ii] == hash_t2_l[jj]):
+                temp_max = check_equality(
+                    hash_s1,
+                    hash_t1,
+                    hash_s2,
+                    hash_t2,
+                    l,
+                    min(len(hash_s1.s) + 1 - ii, len(hash_t1.s) + 1 - jj),
+                    ii,
+                    jj,
+                )
+                if temp_max.len > possbile_max.len:
+                    possbile_max = temp_max
+    if possbile_max.len > 0:
+        return possbile_max
+    elif possbile_max.len == 0 and end_l - start_l == 1:
+        return Answer(0, 0, 0)
+    else:
+        return check(hash_s1, hash_t1, hash_s2, hash_t2, start_l, l)
 
 
 def check_equality(
-    ii,
-    jj,
-    start,
-    end,
-    hash_table_s_1,
-    hash_table_t_2,
-    hash_table_s_2,
-    hash_table_t_1,
-    x,
-    m1,
-    m2,
+    hash_s1, hash_t1, hash_s2, hash_t2, start_l, end_l, s_index, t_index
 ):
-    if start == end or start == end - 1:
-        return Answer(ii, jj, start)
-    if ii + (start + end) // 2 >= len(hash_table_s_1) or jj + (start + end) // 2 >= len(
-        hash_table_t_1
-    ):
-        return Answer(ii, jj, start)
-    new_hash_s_k_1 = get_hash(hash_table_s_1, ii, (start + end) // 2, x, m1)
-    new_hash_t_k_1 = get_hash(hash_table_t_1, jj, (start + end) // 2, x, m1)
-
-    new_hash_s_k_2 = get_hash(hash_table_s_2, ii, (start + end) // 2, x, m2)
-    new_hash_t_k_2 = get_hash(hash_table_t_2, jj, (start + end) // 2, x, m2)
-
+    if end_l - start_l == 1:
+        return Answer(s_index, t_index, start_l)
+    l = (start_l + end_l) // 2
     if (
-        new_hash_s_k_1 % m1 == new_hash_t_k_1 % m1
-        and new_hash_s_k_2 % m2 == new_hash_t_k_2 % m2
+        hash_s1.get_hash(s_index, l) % hash_s1.m
+        == hash_t1.get_hash(t_index, l) % hash_t1.m
+        and hash_s2.get_hash(s_index, l) % hash_s2.m
+        == hash_t2.get_hash(t_index, l) % hash_t2.m
     ):
         return check_equality(
-            ii,
-            jj,
-            (start + end) // 2,
-            end,
-            hash_table_s_1,
-            hash_table_t_1,
-            hash_table_s_2,
-            hash_table_t_2,
-            x,
-            m1,
-            m2,
+            hash_s1, hash_t1, hash_s2, hash_t2, l, end_l, s_index, t_index
         )
     else:
         return check_equality(
-            ii,
-            jj,
-            start,
-            (start + end) // 2,
-            hash_table_s_1,
-            hash_table_t_2,
-            hash_table_s_2,
-            hash_table_t_2,
-            x,
-            m1,
-            m2,
+            hash_s1, hash_t1, hash_s2, hash_t2, start_l, l, s_index, t_index
         )
 
 
 def solve(s, t):
-    m1 = pow(10, 9) + 7
-    m2 = pow(10, 9) + 9
+    m1 = 1000000000039
+    m2 = 1000000000061
 
-    x = 1
+    x = 35
+    hash_s1 = hash(s, x, m1)
+    hash_s2 = hash(s, x, m2)
 
-    hash_table_s_1 = get_hash_sum(s, x, m1)
-    hash_table_t_1 = get_hash_sum(t, x, m1)
+    hash_t1 = hash(t, x, m1)
+    hash_t2 = hash(t, x, m2)
 
-    hash_table_s_2 = get_hash_sum(s, x, m2)
-    hash_table_t_2 = get_hash_sum(t, x, m2)
-
-    max_length = min([len(s), len(t)])
-    middle = max_length // 2
-
-    hash_table_s_middle_1 = get_hash_k(hash_table_s_1, s, middle, x, m1)
-    hash_table_t_middle_1 = get_hash_k(hash_table_t_1, t, middle, x, m1)
-
-    hash_table_s_middle_2 = get_hash_k(hash_table_s_2, s, middle, x, m2)
-    hash_table_t_middle_2 = get_hash_k(hash_table_t_2, t, middle, x, m2)
-
-    possible_equals = []
-    for ii in range(len(hash_table_s_middle_1)):
-        if hash_table_s_middle_1[ii] in hash_table_t_middle_1:
-            jj = hash_table_t_middle_1.index(hash_table_s_middle_1[ii])
-            if hash_table_s_middle_2[ii] % m2 == hash_table_t_middle_2[jj] % m2:
-                possible_equals.append(
-                    check_equality(
-                        ii,
-                        jj,
-                        middle,
-                        max_length,
-                        hash_table_s_1,
-                        hash_table_t_1,
-                        hash_table_s_2,
-                        hash_table_t_2,
-                        x,
-                        m1,
-                        m2,
-                    )
-                )
-    if len(possible_equals) == 0:
-        return Answer(0, 1, 0)
-    else:
-        return max(possible_equals, key=lambda x: x[-1])
+    start_l = 0
+    end_l = min(len(hash_s1.s) + 1, len(hash_t1.s) + 1)
+    return check(hash_s1, hash_t1, hash_s2, hash_t2, start_l, end_l)
 
 
 for line in sys.stdin.readlines():
