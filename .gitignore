@@ -46,4 +46,4 @@ tmp/
 .sqlhistory
 dolt/
 
-.pdf
+*.pdf
