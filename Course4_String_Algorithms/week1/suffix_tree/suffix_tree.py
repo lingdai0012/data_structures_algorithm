@@ -48,7 +48,7 @@ def build_trie(text_patterns, text):
 
 def dfs(trie, key, value, edge, result):
     edge += key
-·后缀树    if value not in trie:
+    if value not in trie:
         result.append(edge)
     elif len(trie[value]) == 1:
         dfs(
