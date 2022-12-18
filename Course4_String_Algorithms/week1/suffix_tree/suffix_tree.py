@@ -1,74 +1,62 @@
 # python3
 import sys
 from collections import namedtuple
+sys.setrecursionlimit(10**6)
 
+class SuffixTree:
+    class Node:
+        def __init__(self, start: int = None, end: int = None):
+            self.start = start
+            self.end = end
+            self.children = {}
 
-NODE_ID = 0
-node = namedtuple("node", ["node_id", "pattern_end"])
+    def __init__(self, text):
+        self.text = text
+        self.text_len = len(text)
+        self.root = self.Node()
+        self.build_tree()
 
-
-def build_trie(text_patterns, text):
-    global NODE_ID
-    tree = dict()
-    # write your code here
-    root_node = node(0, None)
-    for text_pattern in text_patterns:
-        pattern = text[text_pattern:]
-        curr_node = root_node
-        for ii in range(len(pattern)):
-            curr_symbol = pattern[ii]
-            curr_node_next_edge = tree.get(curr_node, None)
-            if curr_node_next_edge is not None:
-                end_node = curr_node_next_edge.get(curr_symbol, None)
-                if end_node is not None:
-                    if ii == len(pattern) - 1:
-                        updated_node = node(end_node.node_id, text_pattern)
-                        curr_node_next_edge.update({curr_symbol: updated_node})
-                        if end_node in tree:
-                            tree[updated_node] = tree[end_node]
-                            tree.pop(end_node)
-                            end_node = updated_node
-                    curr_node = end_node
-                else:
-                    NODE_ID += 1
-                    new_node = node(
-                        NODE_ID, text_pattern if ii == len(pattern) - 1 else None
-                    )
-                    curr_node_next_edge.update({curr_symbol: new_node})
-                    curr_node = new_node
+    def build_tree(self):
+        init_node = self.Node(0, self.text_len)
+        self.root.children[self.text[0]] = init_node    
+        for ii in range(1, self.text_len):
+            node = self.root.children.get(self.text[ii], None)
+            if node is None:
+                self.root.children[self.text[ii]] = self.Node(ii, self.text_len)
             else:
-                NODE_ID += 1
-                new_node = node(
-                    NODE_ID, text_pattern if ii == len(pattern) - 1 else None
-                )
-                tree[curr_node] = {curr_symbol: new_node}
-                curr_node = new_node
-    return tree
+                self.break_node(node, ii)
 
 
-def dfs(trie, key, value, edge, result):
-    edge += key
-    if value not in trie:
-        result.append(edge)
-    elif len(trie[value]) == 1:
-        dfs(
-            trie,
-            list(trie[value].items())[0][0],
-            list(trie[value].items())[0][1],
-            edge,
-            result,
-        )
-    else:
-        result.append(edge)
-        for key, value in trie[value].items():
-            dfs(
-                trie,
-                key,
-                value,
-                "",
-                result,
-            )
-    return
+    def break_node(self, node: Node, text_start: int):
+        node_edge_length = node.end - node.start
+        new_edge_length = self.text_len - text_start
+        min_length = min(node_edge_length, new_edge_length)
+        for ii in range(min_length):
+            if self.text[node.start + ii] == self.text[text_start + ii]:
+                if ii == min_length - 1:
+                    if node_edge_length<new_edge_length:
+                        next_node = node.children.get(self.text[text_start + min_length], None)
+                        if next_node is None:
+                            node.children.update({self.text[text_start + min_length]: self.Node(text_start + min_length, self.text_len)})
+                            break
+                        else:
+                            self.break_node(next_node, text_start + min_length)
+                continue
+            else:
+                extended_node = self.Node(node.start + ii, node.end)
+                new_node = self.Node(text_start + ii, self.text_len)
+                while len(node.children) > 0:
+                    label, kid = node.children.popitem()
+                    extended_node.children.update({label:kid})
+                node.end = node.start + ii
+                node.children.update({self.text[node.start + ii]: extended_node})
+                node.children.update({self.text[text_start + ii]: new_node})
+                break
+
+    def collect_result(self, node:Node, result:list) -> None:
+        for _, next_node in node.children.items():
+            result.append(self.text[next_node.start:next_node.end])
+            self.collect_result(next_node, result)
 
 
 def build_suffix_tree(text):
@@ -79,15 +67,16 @@ def build_suffix_tree(text):
     """
     result = []
     # Implement this function yourself
-    text_patterns = [ii for ii in range(len(text))]
-    suffix_trie = build_trie(text_patterns, text)
-    starting_node = node(0, None)
-    edge = ""
-    dfs(suffix_trie, "", starting_node, edge, result)
-    return result[1:]
+    st = SuffixTree(text) 
+    st.collect_result(st.root, result)
+    return result
 
 
 if __name__ == "__main__":
     text = sys.stdin.readline().strip()
     result = build_suffix_tree(text)
     print("\n".join(result))
+
+
+
+
