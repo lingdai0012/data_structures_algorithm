@@ -12,6 +12,10 @@ def build_suffix_array(text):
   """
   result = []
   # Implement this function yourself
+  for ii in range(len(text)):
+    result.append((text[ii:] + text[:ii], ii))
+  result = sorted(result, key=lambda x: x[0])
+  result = [r[1] for r in result]
   return result
 
 
