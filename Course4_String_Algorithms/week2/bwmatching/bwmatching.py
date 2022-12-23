@@ -1,7 +1,6 @@
 # python3
 import sys
 
-
 def PreprocessBWT(bwt):
   """
   Preprocess the Burrows-Wheeler Transform bwt of some text
@@ -14,7 +13,21 @@ def PreprocessBWT(bwt):
         from position 0 to position P inclusive.
   """
   # Implement this function yourself
-  pass
+  counts = {}
+  occ_count_before = []
+  occ_count_before.append(counts.copy())
+  for ii in range(len(bwt)):
+    counts[bwt[ii]] = counts.get(bwt[ii], 0) + 1
+    occ_count_before.append(counts.copy())
+  starts = {}
+  cum_value = 0
+  for key in ["$", "A", "C", "G", "T"]:
+    if counts.get(key, None) is None:
+      continue
+    else:
+      starts[key] = cum_value
+      cum_value += counts[key]
+  return starts, occ_count_before
 
 
 def CountOccurrences(pattern, bwt, starts, occ_counts_before):
@@ -24,6 +37,16 @@ def CountOccurrences(pattern, bwt, starts, occ_counts_before):
   information we get from the preprocessing stage - starts and occ_counts_before.
   """
   # Implement this function yourself
+  top = 0
+  bottom = len(bwt) - 1
+  pattern_list = list(pattern)
+  while top <= bottom:
+    if len(pattern_list) > 0:
+      last_char = pattern_list.pop(-1)
+      top = starts[last_char] + occ_counts_before[top].get(last_char, 0)
+      bottom = starts[last_char] + occ_counts_before[bottom + 1].get(last_char, 0) - 1
+    else:
+      return bottom-top+1
   return 0
      
 
