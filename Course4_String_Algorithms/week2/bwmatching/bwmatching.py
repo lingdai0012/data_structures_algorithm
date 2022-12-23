@@ -43,8 +43,8 @@ def CountOccurrences(pattern, bwt, starts, occ_counts_before):
   while top <= bottom:
     if len(pattern_list) > 0:
       last_char = pattern_list.pop(-1)
-      top = starts[last_char] + occ_counts_before[top].get(last_char, 0)
-      bottom = starts[last_char] + occ_counts_before[bottom + 1].get(last_char, 0) - 1
+      top = starts.get(last_char, 0) + occ_counts_before[top].get(last_char, 0)
+      bottom = starts.get(last_char,0) + occ_counts_before[bottom + 1].get(last_char, 0) - 1
     else:
       return bottom-top+1
   return 0
